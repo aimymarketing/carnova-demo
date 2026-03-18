@@ -1,21 +1,8 @@
 'use client';
-
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-interface Vehicle {
-  id: string;
-  year: number;
-  make: string;
-  model: string;
-  trim?: string;
-  price: number;
-  mileage?: number;
-  photos?: string[];
-  status?: string;
-}
-
-const MOCK_VEHICLES: Vehicle[] = [
+const MOCK_VEHICLES = [
   {
     id: '1',
     year: 2021,
@@ -52,12 +39,10 @@ const MOCK_VEHICLES: Vehicle[] = [
 ];
 
 export default function Home() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-
+  const [vehicles, setVehicles] = useState([]);
   useEffect(() => {
     setVehicles(MOCK_VEHICLES);
   }, []);
-
   return (
     <main>
       <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)', color: 'white', textAlign: 'center', padding: '5rem 2rem' }}>
@@ -67,7 +52,6 @@ export default function Home() {
           View Full Inventory
         </Link>
       </section>
-
       <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 1rem' }}>
         <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Featured Vehicles</h2>
         <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
