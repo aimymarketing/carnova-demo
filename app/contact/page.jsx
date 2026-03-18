@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -44,7 +43,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -159,13 +158,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-slate-400">2026 Car Nova. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
