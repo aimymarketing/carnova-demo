@@ -10,7 +10,11 @@ export default function InventoryPage() {
   const [sortBy, setSortBy] = useState('default');
   const [loading, setLoading] = useState(true);
 
-  // Fetch vehicles from API
+  const getImageUrl = (make, model) => {
+    const query = encodeURIComponent(`${make} ${model}`);
+    return `https://source.unsplash.com/600x400/?${query},car&sig=${make}${model}`;
+  };
+
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
@@ -26,11 +30,9 @@ export default function InventoryPage() {
     fetchVehicles();
   }, []);
 
-  // Filter vehicles
   useEffect(() => {
     let filtered = filter === 'all' ? vehicles : vehicles.filter(v => v.status === filter);
-    
-    // Sort
+
     if (sortBy === 'price-asc') {
       filtered = [...filtered].sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-desc') {
@@ -42,7 +44,7 @@ export default function InventoryPage() {
     } else if (sortBy === 'mileage') {
       filtered = [...filtered].sort((a, b) => a.km - b.km);
     }
-    
+
     setFilteredVehicles(filtered);
   }, [vehicles, filter, sortBy]);
 
@@ -59,8 +61,7 @@ export default function InventoryPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-white mb-2">Our Inventory</h1>
         <p className="text-slate-300 mb-8">{vehicles.length} vehicles available</p>
-        
-        {/* Filters */}
+
         <div className="flex flex-wrap gap-4 mb-8">
           <select
             value={filter}
@@ -71,7 +72,7 @@ export default function InventoryPage() {
             <option value="AVAILABLE">Available</option>
             <option value="SOLD">Sold</option>
           </select>
-          
+
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
@@ -86,29 +87,19 @@ export default function InventoryPage() {
           </select>
         </div>
 
-        {/* Vehicle Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVehicles.map((vehicle) => (
             <Link href={`/inventory/${vehicle.id}`} key={vehicle.id}>
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white/20 transition-all duration-300 cursor-pointer">
-                <div className="h-48 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-                  <span className="text-white/50 text-6xl">
-                    {vehicle.make === 'Nissan' ? '🚗' : 
-                     vehicle.make === 'Harley-Davidson' ? '🏍' : 
-                     vehicle.make === 'Audi' ? '🚗' : 
-                     vehicle.make === 'Ford' ? '🚗' : 
-                     vehicle.make === 'Jeep' ? '🚙' : 
-                     vehicle.make === 'Volkswagen' ? '🚗' : 
-                     vehicle.make === 'Dodge' ? '🚗' : 
-                     vehicle.make === 'Infiniti' ? '🚗' : 
-                     vehicle.make === 'BMW' ? '🚗' : 
-                     vehicle.make === 'Mazda' ? '🚗' : 
-                     vehicle.make === 'Hyundai' ? '🚗' : 
-                     vehicle.make === 'Subaru' ? '🚗' : 
-                     vehicle.make === 'Toyota' ? '🚗' : 
-                     vehicle.make === 'Ram' ? '🚛' : 
-                     vehicle.make === 'Pedlon' ? '🚴' : '🚗'}
-                  </span>
+                <div className="h-48 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={`https://source.unsplash.com/600x400/?${encodeURIComponent(vehicle.make + ' ' + vehicle.model)},car`}
+                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop';
+                    }}
+                  />
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
@@ -121,8 +112,7 @@ export default function InventoryPage() {
                       </p>
                     </div>
                     <span className={`text-sm font-semibold px-2 py-1 rounded ${
-                      vehicle.status === 'AVAILABLE' ? 'bg-green-500/20 text-green-400' : 
-                      'bg-red-500/20 text-red-400'
+                      vehicle.status === 'AVAILABLE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                     }`}>
                       {vehicle.status}
                     </span>
