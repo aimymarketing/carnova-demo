@@ -80,4 +80,5 @@ export default function HomePage() {
       </section>
     </div>
   );
+  // Force redeploy with contact page included - timestamp
 }
