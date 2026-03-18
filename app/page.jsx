@@ -31,12 +31,12 @@ export default function HomePage() {
 
     // Harley-Davidson / Motorcycle
     if (makeLower.includes('harley') || modelLower.includes('road glide') || modelLower.includes('sportster') || modelLower.includes('vrod')) {
-      return 'https://images.pexels.com/photos/176132/pexels-photo-176132.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+      return 'https://images.pexels.com/photos/1915149/pexels-photo-1915149.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
     }
 
     // Cargo / Delivery Van (Nissan NV200, Ram, etc.)
     if (modelLower.includes('nv200') || modelLower.includes('cargo') || modelLower.includes('van') || modelLower.includes('v6')) {
-      return 'https://images.pexels.com/photos/7599356/pexels-photo-7599356.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+      return 'https://images.pexels.com/photos/7363099/pexels-photo-7363099.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
     }
 
     // Audi / Sedan
