@@ -10,9 +10,19 @@ export default function InventoryPage() {
   const [sortBy, setSortBy] = useState('default');
   const [loading, setLoading] = useState(true);
 
-  const getImageUrl = (make, model) => {
-    const query = encodeURIComponent(`${make} ${model}`);
-    return `https://source.unsplash.com/600x400/?${query},car&sig=${make}${model}`;
+  const getImageUrl = (make, model, year) => {
+    const makeLower = make.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const seed = `${makeLower}${year}`;
+    return `https://picsum.photos/seed/${seed}/600/400`;
+  };
+
+  const getStatusEmoji = (make) => {
+    const lower = make.toLowerCase();
+    if (lower.includes('harley') || lower.includes('bmw') && lower.includes('r')) return '\u{1F3CD}';
+    if (lower.includes('ram') || lower.includes('ford') && lower.includes('f-')) return '\u{1F69B}';
+    if (lower.includes('pedlon')) return '\u{1F6B4}';
+    if (lower.includes('jeep')) return '\u{1F699}';
+    return '\u{1F697}';
   };
 
   useEffect(() => {
@@ -34,15 +44,15 @@ export default function InventoryPage() {
     let filtered = filter === 'all' ? vehicles : vehicles.filter(v => v.status === filter);
 
     if (sortBy === 'price-asc') {
-      filtered = [...filtered].sort((a, b) => a.price - b.price);
+      filtered = [...filtered].sort((a, b) => (a.price || 0) - (b.price || 0));
     } else if (sortBy === 'price-desc') {
-      filtered = [...filtered].sort((a, b) => b.price - a.price);
+      filtered = [...filtered].sort((a, b) => (b.price || 0) - (a.price || 0));
     } else if (sortBy === 'year-desc') {
-      filtered = [...filtered].sort((a, b) => b.year - a.year);
-    } else if (sortBy === 'make') {
+      filtered = [...filtered].sort((a, b) => (b.year || 0) - (a.year || 0));
+    } else if (sortBy === 'make-asc') {
       filtered = [...filtered].sort((a, b) => a.make.localeCompare(b.make));
-    } else if (sortBy === 'mileage') {
-      filtered = [...filtered].sort((a, b) => a.km - b.km);
+    } else if (sortBy === 'mileage-asc') {
+      filtered = [...filtered].sort((a, b) => (a.mileage || 0) - (b.mileage || 0));
     }
 
     setFilteredVehicles(filtered);
@@ -50,81 +60,68 @@ export default function InventoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading inventory...</div>
+      <div className="min-h-screen p-8">
+        <h1 className="text-4xl font-bold mb-8">Our Inventory</h1>
+        <p className="text-xl">Loading vehicles...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-white mb-2">Our Inventory</h1>
-        <p className="text-slate-300 mb-8">{vehicles.length} vehicles available</p>
+    <div className="min-h-screen p-8">
+      <h1 className="text-4xl font-bold mb-2">Our Inventory</h1>
+      <p className="text-gray-600 mb-6">{filteredVehicles.length} vehicles available</p>
 
-        <div className="flex flex-wrap gap-4 mb-8">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white"
+      <div className="flex gap-4 mb-8">
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="all">All Status</option>
+          <option value="available">Available</option>
+          <option value="sold">Sold</option>
+        </select>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="default">Sort By</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="year-desc">Year: Newest First</option>
+          <option value="make-asc">Make: A-Z</option>
+          <option value="mileage-asc">Mileage: Low to High</option>
+        </select>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filteredVehicles.map((vehicle) => (
+          <Link
+            key={vehicle.stock_number}
+            href={`/inventory/${vehicle.stock_number}`}
+            className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
           >
-            <option value="all">All Status</option>
-            <option value="AVAILABLE">Available</option>
-            <option value="SOLD">Sold</option>
-          </select>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white"
-          >
-            <option value="default">Sort By</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="year-desc">Year: Newest First</option>
-            <option value="make">Make: A-Z</option>
-            <option value="mileage">Mileage: Low to High</option>
-          </select>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVehicles.map((vehicle) => (
-            <Link href={`/inventory/${vehicle.id}`} key={vehicle.id}>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden hover:bg-white/20 transition-all duration-300 cursor-pointer">
-                <div className="h-48 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={`https://source.unsplash.com/600x400/?${encodeURIComponent(vehicle.make + ' ' + vehicle.model)},car`}
-                    alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop';
-                    }}
-                  />
-                </div>
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        {vehicle.year} {vehicle.make} {vehicle.model}
-                      </h3>
-                      <p className="text-sm text-slate-300">
-                        {vehicle.colour || vehicle.color} · {vehicle.km.toLocaleString()} km
-                      </p>
-                    </div>
-                    <span className={`text-sm font-semibold px-2 py-1 rounded ${
-                      vehicle.status === 'AVAILABLE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
-                      {vehicle.status}
-                    </span>
-                  </div>
-                  <p className="text-2xl font-bold text-blue-400">
-                    ${vehicle.price.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+            <img
+              src={getImageUrl(vehicle.make, vehicle.model, vehicle.year)}
+              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-4">
+              <h3 className="text-xl font-bold">
+                {vehicle.year} {vehicle.make} {vehicle.model}
+              </h3>
+              <p className="text-gray-600">
+                {vehicle.color} \u00B7 {(vehicle.mileage || 0).toLocaleString()} km
+              </p>
+              <p className={`mt-2 font-semibold ${vehicle.status === 'AVAILABLE' ? 'text-green-600' : 'text-red-600'}`}>
+                {vehicle.status}
+              </p>
+              <p className="text-2xl font-bold mt-2">${vehicle.price.toLocaleString()}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );
