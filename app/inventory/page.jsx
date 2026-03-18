@@ -1,20 +1,8 @@
 'use client';
-
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-interface Vehicle {
-  id: string;
-  year: number;
-  make: string;
-  model: string;
-  price: number;
-  mileage: number;
-  image: string;
-  status: 'Available' | 'Sold' | 'Pending';
-}
-
-const MOCK_VEHICLES: Vehicle[] = [
+const MOCK_VEHICLES = [
   {
     id: '1',
     year: 2023,
@@ -68,39 +56,30 @@ const MOCK_VEHICLES: Vehicle[] = [
 ];
 
 export default function InventoryPage() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useState([]);
   const [filter, setFilter] = useState('All');
-
   useEffect(() => {
     setVehicles(MOCK_VEHICLES);
   }, []);
-
   const filteredVehicles = filter === 'All' 
     ? vehicles 
     : vehicles.filter(v => v.status === filter);
-
   return (
     <main className="min-h-screen bg-gray-50">
       <section className="py-8 px-4 md:px-8">
         <h1 className="text-4xl font-bold mb-2">Vehicle Inventory</h1>
         <p className="text-gray-600 mb-6">Browse our pre-owned vehicles</p>
-
         <div className="mb-6 flex gap-2">
           {['All', 'Available', 'Sold'].map(status => (
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded font-medium ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
-              }`}
+              className={`px-4 py-2 rounded font-medium ${filter === status ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300'}`}
             >
               {status}
             </button>
           ))}
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVehicles.map(vehicle => (
             <Link
@@ -114,10 +93,7 @@ export default function InventoryPage() {
                   alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                   className="w-full h-48 object-cover bg-gray-300"
                 />
-                <div className={`absolute top-3 right-3 px-3 py-1 rounded text-white text-sm font-medium ${
-                  vehicle.status === 'Available' ? 'bg-green-500' :
-                  vehicle.status === 'Sold' ? 'bg-red-500' : 'bg-yellow-500'
-                }`}>
+                <div className={`absolute top-3 right-3 px-3 py-1 rounded text-white text-sm font-medium ${vehicle.status === 'Available' ? 'bg-green-500' : vehicle.status === 'Sold' ? 'bg-red-500' : 'bg-yellow-500'}`}>
                   {vehicle.status}
                 </div>
               </div>
