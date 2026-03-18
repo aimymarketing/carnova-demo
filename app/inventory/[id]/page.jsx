@@ -11,148 +11,126 @@ export default function VehicleDetailPage({ params }) {
 
   const { id } = params;
 
+  const getImageUrl = (make, model, year) => {
+    const makeLower = make.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const seed = `${makeLower}${year}`;
+    return `https://picsum.photos/seed/${seed}/1200/600`;
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchVehicle = async () => {
       try {
         const response = await fetch('/api/inventory');
         const data = await response.json();
         setAllVehicles(data);
+        const found = data.find(v => v.stock_number === id);
+        setVehicle(found || null);
         setLoading(false);
+        if (!found) {
+          setError('Vehicle not found');
+        }
       } catch (err) {
-        console.error('Error fetching vehicles:', err);
-        setError('Error loading vehicle details');
+        console.error('Error fetching vehicle:', err);
         setLoading(false);
+        setError('Failed to load vehicle details');
       }
     };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!loading && allVehicles.length > 0) {
-      const found = allVehicles.find(v => v.id === id);
-      if (found) {
-        setVehicle(found);
-        setError(null);
-      } else {
-        setError('Vehicle not found');
-      }
-    }
-  }, [loading, allVehicles, id]);
+    fetchVehicle();
+  }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading vehicle details...</div>
+      <div className="min-h-screen p-8">
+        <Link href="/inventory" className="text-blue-600 hover:underline mb-4 block">\u2190 Back to Inventory</Link>
+        <p className="text-xl">Loading vehicle details...</p>
       </div>
     );
   }
 
   if (error || !vehicle) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <Link href="/inventory" className="text-blue-400 hover:text-blue-300">
-            &larr; Back to Inventory
-          </Link>
-          <div className="text-white text-2xl mt-8">{error || 'Vehicle not found'}</div>
-        </div>
+      <div className="min-h-screen p-8">
+        <Link href="/inventory" className="text-blue-600 hover:underline mb-4 block">\u2190 Back to Inventory</Link>
+        <p className="text-xl text-red-600">{error || 'Vehicle not found'}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <Link href="/inventory" className="text-blue-400 hover:text-blue-300">
-          &larr; Back to Inventory
-        </Link>
+    <div className="min-h-screen p-8">
+      <Link href="/inventory" className="text-blue-600 hover:underline mb-4 block">\u2190 Back to Inventory</Link>
+      
+      <img
+        src={getImageUrl(vehicle.make, vehicle.model, vehicle.year)}
+        alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        className="w-full max-w-4xl h-96 object-cover rounded-lg mb-6"
+      />
 
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden">
-            <img
-              src={`https://source.unsplash.com/800x600/?${encodeURIComponent(vehicle.make + ' ' + vehicle.model)},car`}
-              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-              className="w-full h-96 object-cover"
-              onError={(e) => {
-                e.target.src = 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=600&fit=crop';
-              }}
-            />
-          </div>
+      <h1 className="text-4xl font-bold mb-2">
+        {vehicle.year} {vehicle.make} {vehicle.model}
+      </h1>
+      <p className="text-gray-600 text-lg mb-4">
+        {vehicle.color} \u00B7 {(vehicle.mileage || 0).toLocaleString()} km
+      </p>
 
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">
-              {vehicle.year} {vehicle.make} {vehicle.model}
-            </h1>
-            <p className="text-slate-300 text-lg mb-6">
-              {vehicle.colour || vehicle.color} &middot; {vehicle.km.toLocaleString()} km
-            </p>
-
-            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 mb-6">
-              <p className="text-slate-400 text-sm mb-1">Price</p>
-              <p className="text-3xl font-bold text-blue-400">
-                {vehicle.price === 0 ? 'Contact for Price' : `$${vehicle.price.toLocaleString()}`}
-              </p>
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Details</h2>
+          <dl className="space-y-3">
+            <div>
+              <dt className="text-gray-500">Price</dt>
+              <dd className="text-2xl font-bold text-green-600">${vehicle.price.toLocaleString()}</dd>
             </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                <p className="text-slate-400 text-sm">Year</p>
-                <p className="text-white font-semibold">{vehicle.year}</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                <p className="text-slate-400 text-sm">Mileage</p>
-                <p className="text-white font-semibold">{vehicle.km.toLocaleString()} km</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                <p className="text-slate-400 text-sm">Color</p>
-                <p className="text-white font-semibold">{vehicle.colour || vehicle.color}</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                <p className="text-slate-400 text-sm">Status</p>
-                <p className={`font-semibold ${vehicle.status === 'AVAILABLE' ? 'text-green-400' : 'text-red-400'}`}>
-                  {vehicle.status}
-                </p>
-              </div>
+            <div>
+              <dt className="text-gray-500">Year</dt>
+              <dd>{vehicle.year}</dd>
             </div>
-
-            <div className="flex gap-4">
-              <a
-                href="tel:+19029000000"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
-              >
-                Call for More Info
-              </a>
-              <Link
-                href="/inventory"
-                className="border border-white/30 hover:bg-white/10 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
-              >
-                View All Inventory
-              </Link>
+            <div>
+              <dt className="text-gray-500">Mileage</dt>
+              <dd>{(vehicle.mileage || 0).toLocaleString()} km</dd>
             </div>
-          </div>
+            <div>
+              <dt className="text-gray-500">Color</dt>
+              <dd>{vehicle.color}</dd>
+            </div>
+            <div>
+              <dt className="text-gray-500">Status</dt>
+              <dd className={`font-semibold ${vehicle.status === 'AVAILABLE' ? 'text-green-600' : 'text-red-600'}`}>
+                {vehicle.status}
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="mt-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-          <h2 className="text-2xl font-bold text-white mb-4">Vehicle Information</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Vehicle Information</h2>
+          <dl className="space-y-3">
             <div>
-              <p className="text-slate-400 text-sm">Make</p>
-              <p className="text-white font-semibold">{vehicle.make}</p>
+              <dt className="text-gray-500">Make</dt>
+              <dd>{vehicle.make}</dd>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Model</p>
-              <p className="text-white font-semibold">{vehicle.model}</p>
+              <dt className="text-gray-500">Model</dt>
+              <dd>{vehicle.model}</dd>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Year</p>
-              <p className="text-white font-semibold">{vehicle.year}</p>
+              <dt className="text-gray-500">Year</dt>
+              <dd>{vehicle.year}</dd>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Stock #</p>
-              <p className="text-white font-semibold">{vehicle.id}</p>
+              <dt className="text-gray-500">Stock #</dt>
+              <dd>{vehicle.stock_number}</dd>
             </div>
-          </div>
+          </dl>
         </div>
+      </div>
+
+      <div className="mt-8 max-w-4xl">
+        <p className="text-lg">
+          <a href="tel:+19025551234" className="text-blue-600 hover:underline">Call for More Info</a>
+          {' | '}
+          <Link href="/inventory" className="text-blue-600 hover:underline">View All Inventory</Link>
+        </p>
       </div>
     </div>
   );
