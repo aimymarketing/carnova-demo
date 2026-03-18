@@ -1,15 +1,12 @@
 import './globals.css';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Car Nova | Quality Pre-Owned Vehicles',
   description: 'Browse our inventory of quality pre-owned vehicles in Nova Scotia. Simple, transparent, and local.',
 };
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -27,7 +24,7 @@ export default function RootLayout({
         </nav>
         {children}
         <footer style={{ background: '#1e293b', color: 'white', padding: '2rem', textAlign: 'center', marginTop: '3rem' }}>
-          <p>&copy; 2026 Car Nova. All rights reserved.</p>
+          <p>2026 Car Nova. All rights reserved.</p>
         </footer>
       </body>
     </html>
