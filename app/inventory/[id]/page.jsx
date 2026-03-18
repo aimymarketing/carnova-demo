@@ -3,18 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-interface Vehicle {
-  id: string;
-  year: number;
-  make: string;
-  model: string;
-  price: number;
-  mileage: number;
-  image: string;
-  status: 'Available' | 'Sold' | 'Pending';
-}
-
-const MOCK_VEHICLES: Record<string, Vehicle> = {
+const MOCK_VEHICLES = {
   '1': {
     id: '1',
     year: 2023,
@@ -67,8 +56,8 @@ const MOCK_VEHICLES: Record<string, Vehicle> = {
   }
 };
 
-export default function VehicleDetailPage({ params }: { params: { id: string } }) {
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+export default function VehicleDetailPage({ params }) {
+  const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -112,7 +101,6 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
         >
           ← Back to Inventory
         </Link>
-
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="relative">
             <img
@@ -127,12 +115,10 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
               {vehicle.status}
             </div>
           </div>
-
           <div className="p-8">
             <h1 className="text-4xl font-bold mb-2">
               {vehicle.year} {vehicle.make} {vehicle.model}
             </h1>
-
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
                 <h2 className="text-2xl text-blue-600 font-bold mb-2">
@@ -142,7 +128,6 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
                   Mileage: {vehicle.mileage.toLocaleString()} miles
                 </p>
               </div>
-
               <div className="space-y-3">
                 <div>
                   <p className="text-gray-600">Year</p>
@@ -158,7 +143,6 @@ export default function VehicleDetailPage({ params }: { params: { id: string } }
                 </div>
               </div>
             </div>
-
             {vehicle.status === 'Available' && (
               <div className="border-t pt-6">
                 <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">
