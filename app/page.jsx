@@ -30,7 +30,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -41,13 +41,12 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
       {/* Featured Vehicles */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-slate-900 mb-2">Featured Vehicles</h2>
           <p className="text-slate-600 mb-8">Check out our top picks</p>
-          
+
           {loading ? (
             <p className="text-slate-500">Loading featured vehicles...</p>
           ) : (
@@ -78,13 +77,6 @@ export default function HomePage() {
           )}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-slate-400">2026 Car Nova. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
