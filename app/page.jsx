@@ -24,10 +24,73 @@ export default function HomePage() {
     fetchFeatured();
   }, []);
 
-  const getImageUrl = (make, model, year) => {
-    const makeLower = make.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const seed = `${makeLower}${year}`;
-    return `https://picsum.photos/seed/${seed}/400/250`;
+  const getImageUrl = (make, model, colour, year) => {
+    const makeLower = make.toLowerCase();
+    const modelLower = (model || '').toLowerCase();
+    const colourLower = (colour || '').toLowerCase();
+
+    // Harley-Davidson / Motorcycle
+    if (makeLower.includes('harley') || modelLower.includes('road glide') || modelLower.includes('sportster') || modelLower.includes('vrod')) {
+      return 'https://images.pexels.com/photos/176132/pexels-photo-176132.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Cargo / Delivery Van (Nissan NV200, Ram, etc.)
+    if (modelLower.includes('nv200') || modelLower.includes('cargo') || modelLower.includes('van') || modelLower.includes('v6')) {
+      return 'https://images.pexels.com/photos/7599356/pexels-photo-7599356.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Audi / Sedan
+    if (makeLower.includes('audi')) {
+      return 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Volkswagen
+    if (makeLower.includes('volkswagen') || makeLower.includes('vw')) {
+      return 'https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Ford
+    if (makeLower.includes('ford')) {
+      return 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // BMW
+    if (makeLower.includes('bmw')) {
+      return 'https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Dodge / Jeep
+    if (makeLower.includes('dodge') || makeLower.includes('jeep')) {
+      return 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Toyota
+    if (makeLower.includes('toyota')) {
+      return 'https://images.pexels.com/photos/159314/pexels-photo-159314.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Hyundai
+    if (makeLower.includes('hyundai')) {
+      return 'https://images.pexels.com/photos/1164196/pexels-photo-1164196.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Mazda
+    if (makeLower.includes('mazda')) {
+      return 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Infiniti
+    if (makeLower.includes('infiniti')) {
+      return 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Subaru
+    if (makeLower.includes('subaru')) {
+      return 'https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
+    }
+
+    // Default car image
+    return 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=400&h=250';
   };
 
   return (
@@ -47,7 +110,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-slate-900 mb-2">Featured Vehicles</h2>
           <p className="text-slate-600 mb-8">Check out our top picks</p>
-
           {loading ? (
             <p className="text-slate-500">Loading featured vehicles...</p>
           ) : (
@@ -56,7 +118,7 @@ export default function HomePage() {
                 <Link href={`/inventory/${vehicle.id}`} key={vehicle.id} className="group">
                   <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
                     <img
-                      src={getImageUrl(vehicle.make, vehicle.model, vehicle.year)}
+                      src={getImageUrl(vehicle.make, vehicle.model, vehicle.colour || vehicle.color, vehicle.year)}
                       alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                       className="w-full h-48 object-cover"
                     />
@@ -80,5 +142,4 @@ export default function HomePage() {
       </section>
     </div>
   );
-  // Force redeploy with contact page included - timestamp
 }
