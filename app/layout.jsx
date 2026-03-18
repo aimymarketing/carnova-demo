@@ -18,7 +18,7 @@ export default function RootLayout({
             </a>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
               <a href="/inventory" style={{ color: 'white', textDecoration: 'none' }}>Inventory</a>
-              <a href="#contact" style={{ color: 'white', textDecoration: 'none' }}>Contact</a>
+              <a href="/contact" style={{ color: 'white', textDecoration: 'none' }}>Contact</a>
             </div>
           </div>
         </nav>
