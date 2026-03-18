@@ -7,7 +7,6 @@ export default function VehicleDetailPage({ params }) {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [allVehicles, setAllVehicles] = useState([]);
 
   const { id } = params;
 
@@ -22,8 +21,7 @@ export default function VehicleDetailPage({ params }) {
       try {
         const response = await fetch('/api/inventory');
         const data = await response.json();
-        setAllVehicles(data);
-        const found = data.find(v => v.stock_number === id);
+        const found = data.find(v => v.id === id);
         setVehicle(found || null);
         setLoading(false);
         if (!found) {
@@ -59,20 +57,18 @@ export default function VehicleDetailPage({ params }) {
   return (
     <div className="min-h-screen p-8">
       <Link href="/inventory" className="text-blue-600 hover:underline mb-4 block">\u2190 Back to Inventory</Link>
-      
+
       <img
         src={getImageUrl(vehicle.make, vehicle.model, vehicle.year)}
         alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
         className="w-full max-w-4xl h-96 object-cover rounded-lg mb-6"
       />
-
       <h1 className="text-4xl font-bold mb-2">
         {vehicle.year} {vehicle.make} {vehicle.model}
       </h1>
       <p className="text-gray-600 text-lg mb-4">
-        {vehicle.color} \u00B7 {(vehicle.mileage || 0).toLocaleString()} km
+        {vehicle.color} \u00B7 {(vehicle.km || 0).toLocaleString()} km
       </p>
-
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
         <div>
           <h2 className="text-xl font-semibold mb-4">Details</h2>
@@ -87,7 +83,7 @@ export default function VehicleDetailPage({ params }) {
             </div>
             <div>
               <dt className="text-gray-500">Mileage</dt>
-              <dd>{(vehicle.mileage || 0).toLocaleString()} km</dd>
+              <dd>{(vehicle.km || 0).toLocaleString()} km</dd>
             </div>
             <div>
               <dt className="text-gray-500">Color</dt>
@@ -101,7 +97,6 @@ export default function VehicleDetailPage({ params }) {
             </div>
           </dl>
         </div>
-
         <div>
           <h2 className="text-xl font-semibold mb-4">Vehicle Information</h2>
           <dl className="space-y-3">
@@ -119,12 +114,11 @@ export default function VehicleDetailPage({ params }) {
             </div>
             <div>
               <dt className="text-gray-500">Stock #</dt>
-              <dd>{vehicle.stock_number}</dd>
+              <dd>{vehicle.id}</dd>
             </div>
           </dl>
         </div>
       </div>
-
       <div className="mt-8 max-w-4xl">
         <p className="text-lg">
           <a href="tel:+19025551234" className="text-blue-600 hover:underline">Call for More Info</a>
